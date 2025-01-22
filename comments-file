@@ -1,0 +1,68 @@
+
+CREATE TABLE Student_Details (
+    id INT AUTO_INCREMENT PRIMARY KEY,        -- Unique identifier for each student
+    rollnumber VARCHAR(20) UNIQUE NOT NULL,   -- Unique roll number for each student
+    Name VARCHAR(100) NOT NULL,               -- Full name of the student
+    Dob DATE NOT NULL,                        -- Date of birth
+    gender ENUM('Male', 'Female', 'Other') NOT NULL,  -- Gender
+    Address VARCHAR(255) NOT NULL,            -- Address of the student
+    gmail VARCHAR(100) UNIQUE NOT NULL,       -- Gmail address (unique for each student)
+    password VARCHAR(255) NOT NULL            -- Encrypted password
+    phone int unique not null
+);
+
+CREATE TABLE Student_School (
+    student_id INT,                                  -- Foreign key linking to Student_Details
+    ssc_school VARCHAR(255) NOT NULL,                -- Name of the SSC (10th) school
+    ssc_year_of_passing YEAR NOT NULL,               -- Year of passing SSC (10th)
+    hsc_or_diploma_school VARCHAR(255),              -- Name of the HSC (12th) or Diploma school
+    hsc_or_diploma_year_of_passing YEAR,             -- Year of passing HSC (12th) or Diploma
+    college_name VARCHAR(255) NOT NULL,              -- Name of the college (current/degree college)
+    college_year_of_passing YEAR NOT NULL,           -- Year of passing from college
+    PRIMARY KEY (student_id),                        -- Primary key based on student_id
+    FOREIGN KEY (student_id) REFERENCES Student_Details(id)  -- Foreign key linking to Student_Details
+);
+
+CREATE TABLE Student_Academics (
+    student_id INT,                               -- Foreign key linking to Student_Details
+    branch VARCHAR(100) NOT NULL,                 -- Branch or major of the student (e.g., CSE, ECE)
+    ssc DECIMAL(5, 2) NOT NULL,                   -- SSC (10th) percentage or GPA
+    hsc DECIMAL(5, 2),                           -- HSC (12th) percentage or GPA (optional if diploma is present)
+    diploma DECIMAL(5, 2),                       -- Diploma percentage or GPA (optional if HSC is present)
+    sem1 DECIMAL(5, 2),                          -- GPA for Semester 1
+    sem2 DECIMAL(5, 2),                          -- GPA for Semester 2
+    sem3 DECIMAL(5, 2),                          -- GPA for Semester 3
+    sem4 DECIMAL(5, 2),                          -- GPA for Semester 4
+    sem5 DECIMAL(5, 2),                          -- GPA for Semester 5
+    sem6 DECIMAL(5, 2),                          -- GPA for Semester 6
+    sem7 DECIMAL(5, 2),                          -- GPA for Semester 7
+    sem8 DECIMAL(5, 2),                          -- GPA for Semester 8
+    cgpa DECIMAL(5, 2),                          -- Cumulative GPA
+    PRIMARY KEY (student_id),                    -- Primary key on student_id
+    FOREIGN KEY (student_id) REFERENCES Student_Details(id)  -- Foreign key linking to Student_Details
+);
+
+CREATE TABLE Student_Proofs (
+    student_id INT,                               -- Foreign key linking to Student_Details
+    name VARCHAR(100) NOT NULL,                   -- Name of the proof document (e.g., Aadhar card, Passport)
+    link VARCHAR(255) NOT NULL,                   -- Link to the proof document (e.g., cloud storage URL)
+    PRIMARY KEY (student_id, name),               -- Composite primary key (student_id and name)
+    FOREIGN KEY (student_id) REFERENCES Student_Details(id)  -- Foreign key linking to Student_Details
+);
+
+CREATE TABLE Student_Status (
+    student_id INT,                                -- Foreign key linking to Student_Details
+    status ENUM('Approved', 'Not_Approved', 'Blocklist') NOT NULL,  -- Status of the student
+    PRIMARY KEY (student_id),                      -- Primary key based on student_id
+    FOREIGN KEY (student_id) REFERENCES Student_Details(id)  -- Foreign key linking to Student_Details
+);
+
+CREATE TABLE Student_Placement (
+    student_id INT,                                        -- Foreign key linking to Student_Details
+    placement_status ENUM('Placed', 'Not placed') NOT NULL, -- Placement status (whether the student is placed or not)
+    applied_companies TEXT,                                -- List of companies the student applied to (can be stored as a comma-separated list)
+    rejected_companies TEXT,                               -- List of companies where the student was rejected (can be stored as a comma-separated list)
+    placed_company VARCHAR(255),                           -- The company where the student was placed (if applicable)
+    PRIMARY KEY (student_id),                              -- Primary key on student_id
+    FOREIGN KEY (student_id) REFERENCES Student_Details(id) -- Foreign key linking to Student_Details
+);
