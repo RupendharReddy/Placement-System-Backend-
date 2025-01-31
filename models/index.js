@@ -16,10 +16,15 @@ const StudentPlacement = require('./student_placement')(sequelize, DataTypes);
 StudentProofs.belongsTo(StudentDetails, { foreignKey: 'student_id', onDelete: 'CASCADE' });
 StudentStatus.belongsTo(StudentDetails, { foreignKey: 'student_id', onDelete: 'CASCADE' });
 StudentPlacement.belongsTo(StudentDetails, { foreignKey: 'student_id', onDelete: 'CASCADE' });
+StudentSchool.belongsTo(StudentDetails, { foreignKey: 'student_id', onDelete: 'CASCADE' });
+StudentAcademics.belongsTo(StudentDetails, { foreignKey: 'student_id', onDelete: 'CASCADE' });
 
+// StudentDetails associations
 StudentDetails.hasMany(StudentProofs, { foreignKey: 'student_id' });
 StudentDetails.hasOne(StudentStatus, { foreignKey: 'student_id' });
 StudentDetails.hasOne(StudentPlacement, { foreignKey: 'student_id' });
+StudentDetails.hasOne(StudentSchool, { foreignKey: 'student_id' });  // Assuming one school per student
+StudentDetails.hasMany(StudentAcademics, { foreignKey: 'student_id' });  // Assuming multiple academic records per student
 
 // Export models and Sequelize instance
 module.exports = {
