@@ -8,44 +8,8 @@ app.use(express.urlencoded({ extended: false }));
 
 const port = 3000;
 
-// Route for user registration
-app.use('/register', require('./routes/Authentication/register'));
-
-// **Test Route - Fetch All Student Details**
-app.get('/', async (req, res) => {
-    try {
-        const students = await StudentDetails.findAll(); // Sequelize method to get all student details
-        res.json({
-            message: 'Data retrieved successfully',
-            data: students,
-        });
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-// **Delete Student by ID**
-app.delete('/', async (req, res) => {
-    const { id } = req.body;
-
-    try {
-        const deletedRows = await StudentDetails.destroy({
-            where: { id },
-        });
-
-        if (deletedRows === 0) {
-            return res.status(404).json({ message: 'Student not found' });
-        }
-
-        res.json({
-            message: `Student with ID ${id} deleted successfully`,
-        });
-    } catch (error) {
-        console.error("Error deleting student:", error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
+app.use('/register', require('./routes/Authentication'));
+app.use('/', require('./routes/testingAPIs'));
 
 // **Start the Server After Database Sync**
 sequelize.sync()
