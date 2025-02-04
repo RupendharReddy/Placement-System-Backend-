@@ -1,5 +1,6 @@
 const { StudentDetails } = require('../models');  // Sequelize model
 const bcrypt = require('bcrypt');
+const { generateAccessToken, generateRefreshToken } = require('./token');
 
 const register = async (req, res) => {
     try {
@@ -11,21 +12,23 @@ const register = async (req, res) => {
         // Find user by email using Sequelize
         const user = await StudentDetails.findOne({ where: { gmail } });
 
-        if (!user) {
+        if (!user || !await bcrypt.compare(password, user.password)) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-
-        // Check if passwords match
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        if (isMatch) {
-            res.json({
-                message: 'Login successful',
-                data: user,
-            });
-        } else {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
+      
+        res.cookie('accessToken', accessToken, {
+          httpOnly: true,
+          maxAge: 3600000, // 1 hour
+        });
+      
+        res.cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          maxAge: 2592000000, // 30 days
+        });
+      
+        res.json({ message: 'Logged in successfully' });
     } catch (error) {
         console.error('Server error:', error);
         return res.status(500).json({ error: 'Internal server error' });
